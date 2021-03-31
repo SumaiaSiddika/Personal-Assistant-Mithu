@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -15,6 +16,8 @@ import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -78,7 +81,14 @@ public class MainActivity extends AppCompatActivity
                 ArrayList<String> matches = results.getStringArrayList(speechRecognizer.RESULTS_RECOGNITION);
                 String string = "";
                 textView.setText("");    //what is (the text is) appearing in the app opening
+                if (matches != null) {
+                    string = matches.get(0);
+                    textView.setText(string);
 
+                    if (string.equals("Please open this file")) {
+                        createMethod();
+                    }
+                }
             }
 
             @Override
@@ -100,13 +110,34 @@ public class MainActivity extends AppCompatActivity
 
         try {
             Thread.sleep(3000);    //catch the line that I am saying
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         speechRecognizer.startListening(intent);
+    }
 
+    private void createMethod () {
+        File file = new File(Environment.getExternalStorageDirectory() + File.separator + "PersonalAssistantMithu.txt");
+
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.append("What are you looking for!!!");
+            fileWriter.flush();
+            fileWriter.close();
+        }
+
+        catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            textToSpeech.speak("The text file has been created. Thank you for using Mithu's service.", TextToSpeech.QUEUE_FLUSH, null, null);
+        }
     }
 }
-
-//from 11:30.........
