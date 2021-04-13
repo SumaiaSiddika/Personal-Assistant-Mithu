@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Personal Assistant Mithu</string>
     <string name="start">Start</string>
+    <string name="welcome_to_mithu">Welcome to Mithu</string>
 </resources>
